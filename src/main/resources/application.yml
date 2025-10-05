@@ -1,0 +1,83 @@
+server:
+  port: 5000
+logging:
+  pattern:
+    console: "%green(%d{\"yyyy-MM-dd HH:mm:ss,SSS\"}) %highlight(%-5level) [%blue(%t)] [%red(%X{X-Request-ID})] %yellow(%C{1}): %msg%n%throwable"
+  level:
+    root: INFO
+    org.bookingplatform: DEBUG
+    org.springframework.web: INFO
+    org.springframework.jdbc.core.JdbcTemplate: DEBUG
+    org.springframework.jdbc.core.simple: TRACE
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+
+spring:
+  # Mail Configuration
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: carboncreditmarketplace@gmail.com
+    password: xtbc jibo oewm zliv
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  profiles:
+    active: default
+  application:
+    name: BookingPlatform
+  # Local MySQL Database Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/core_bpp
+    username: root
+    password: anhtuan123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+jwt:
+  secret: MySuperSecretKeyForJWTAuth1234567890 #"A5B7Z7jH2g3N9Q4k6R1S0tL8vY2X3pW4dE7U9bF0cQ1="
+  expiration: 1209600000      
+  refresh-expiration: 604800000 
+app:
+  swagger:
+    enabled: true
+    title: Booking Platform API
+    description: API documentation for Booking Platform - Professional Photography Booking System
+    version: 1.0.0
+    contact:
+      name: Anh Tuan
+      url: https://github.com/anhtuan021
+    server:
+      url: http://localhost:5000
+      description: Development Servers
+
+aws:
+  accessKeyId: ${AWS_ACCESS_KEY} # modify your AWS access key
+  secretKey:  ${AWS_SECRET_KEY} # modify your AWS secret key
+  region: ${AWS_REGION} # modify your AWS region
+  s3:
+    bucket: ${AWS_S3_BUCKET} # modify your S3 bucket name
