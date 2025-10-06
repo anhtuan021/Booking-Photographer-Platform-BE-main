@@ -1,10 +1,11 @@
 package org.bookingplatform.repository;
 
+import java.math.BigInteger;
+import java.util.Optional;
+
 import org.bookingplatform.entity.Speciality;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
-
-public interface SpecialityRepository extends JpaRepository<Speciality, String> {
+public interface SpecialityRepository extends JpaRepository<Speciality, BigInteger> {
     Optional<Speciality> findByCode(String code);
 }
