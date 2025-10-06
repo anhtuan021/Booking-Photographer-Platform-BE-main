@@ -17,8 +17,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: carboncreditmarketplace@gmail.com
-    password: xtbc jibo oewm zliv
+    username: bookingphoto@gmail.com
+    password: ckbd njhd wabu kply
     properties:
       mail:
         smtp:
@@ -76,8 +76,8 @@ app:
       description: Development Servers
 
 aws:
-  accessKeyId: ${AWS_ACCESS_KEY} # modify your AWS access key
-  secretKey:  ${AWS_SECRET_KEY} # modify your AWS secret key
-  region: ${AWS_REGION} # modify your AWS region
+  accessKeyId: AKIA6QLGZKIPGCFXY6EK # modify your AWS access key
+  secretKey:  JPY12RBvSWncGc5eWxsyvY0w4n1MIQoy0mP/Mjxp # modify your AWS secret key
+  region: ap-southeast-2 # modify your AWS region
   s3:
-    bucket: ${AWS_S3_BUCKET} # modify your S3 bucket name
+    bucket: booking-photo-platform # modify your S3 bucket name

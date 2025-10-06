@@ -316,7 +316,7 @@ public class AuthServiceImpl implements AuthService {
         passwordResetTokenRepository.save(passwordResetToken);
 
         // TODO: Send email with reset link
-        String baseUrl = "http://booking-photographer-platform-ap-env.eba-3nsmrptz.ap-southeast-2.elasticbeanstalk.com"; // Replace with actual base URL
+        String baseUrl = "http://localhost:5000"; // Replace with actual base URL
         String resetLink = baseUrl + "/reset-password?token=" + rawToken;
         emailService.sendPasswordResetEmail(user.getEmail(), resetLink);
     }

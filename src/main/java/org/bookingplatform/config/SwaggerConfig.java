@@ -31,10 +31,10 @@ public class SwaggerConfig {
     @Value("${app.swagger.version:1.0.0}")
     private String version;
 
-    @Value("${app.swagger.contact.name:Kien Nguyen}")
+    @Value("${app.swagger.contact.name:Anh Tuan}")
     private String contactName;
 
-    @Value("${app.swagger.contact.url:https://github.com/kiennguyendev2711}")
+    @Value("${app.swagger.contact.url:https://github.com/anhtuan021}")
     private String contactUrl;
 
     @Value("${app.swagger.server.url:http://localhost:5000}")
