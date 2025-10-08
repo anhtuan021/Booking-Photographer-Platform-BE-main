@@ -84,8 +84,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
-                "https://photographer-booking.vercel.app",
-                "https://photographer-booking-admin.vercel.app"
+                "https://booking-photographer-main-flivws7sp-anhtuans-projects-60f7d795.vercel.app",
+                "https://booking-admin-ruddy-phi.vercel.app"
         ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
