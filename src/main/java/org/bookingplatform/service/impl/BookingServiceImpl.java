@@ -48,7 +48,8 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
         // Step 2: Validate photographer
-        UserProfile photographer = userProfileRepository.findById(new BigInteger(String.valueOf(request.getPhotographerId())))
+        UserProfile photographer = userProfileRepository
+                .findById(new BigInteger(String.valueOf(request.getPhotographerId())))
                 .orElseThrow(() -> new RuntimeException("Photographer not found"));
 
         // check if photographer is active
@@ -57,11 +58,9 @@ public class BookingServiceImpl implements BookingService {
         }
 
         // Step 3: Validate service packages
-        List<ServicePackage> servicePackages =
-                servicePackageRepository.findActiveByUserIdAndSpecialityAndCodes(
-                        request.getSpeciality(),
-                        request.getServices()
-                );
+        List<ServicePackage> servicePackages = servicePackageRepository.findActiveByUserIdAndSpecialityAndCodes(
+                request.getSpeciality(),
+                request.getServices());
 
         LocalDate date = LocalDate.parse(request.getDate(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         if (bookingRepository.countBookingsByPhotographerAndDate(photographer.getId(), date) > 5) {
@@ -74,7 +73,17 @@ public class BookingServiceImpl implements BookingService {
         }
         LocalTime startTime = LocalTime.parse(timeParts[0].trim(), DateTimeFormatter.ofPattern("HH:mm"));
         LocalTime endTime = LocalTime.parse(timeParts[1].trim(), DateTimeFormatter.ofPattern("HH:mm"));
+        // ✅ Step: Check if the photographer is already booked at that time
+        boolean isOverlapping = bookingRepository.existsOverlappingBooking(
+                photographer.getId(),
+                date,
+                startTime,
+                endTime);
 
+        if (isOverlapping) {
+            throw new RuntimeException(
+                    "Photographer is already booked at the selected time slot. Please choose another time.");
+        }
         String bookingCode = generateBookingCode();
 
         Booking booking = new Booking();
@@ -133,7 +142,7 @@ public class BookingServiceImpl implements BookingService {
 
         return mapToBookingResponse(savedBooking);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<BookingResponse> getMyBookings(String token) {
@@ -147,7 +156,7 @@ public class BookingServiceImpl implements BookingService {
                 .map(this::mapToBookingResponse)
                 .collect(Collectors.toList());
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public BookingResponse getBookingById(String bookingId) {
@@ -155,7 +164,7 @@ public class BookingServiceImpl implements BookingService {
         BigInteger bookingIdBigInt = new BigInteger(bookingId);
 
         Booking booking = bookingRepository.findById(bookingIdBigInt)
-            .orElseThrow(() -> new RuntimeException("Booking not found"));
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
 
         return mapToBookingResponse(booking);
     }
@@ -223,9 +232,11 @@ public class BookingServiceImpl implements BookingService {
         String userId = jwtService.extractUserId(token);
         BigInteger userIdBigInt = new BigInteger(userId);
         UserProfile photographer = userProfileRepository.findByUser_Id(userIdBigInt)
-            .orElseThrow(() -> new RuntimeException("Photographer profile not found"));
-        long total = bookingRepository.findByPhotographerIdOrderByCreatedAtDesc(photographer.getId(), org.springframework.data.domain.PageRequest.of(0, 1)).getTotalElements();
-        long completed = bookingRepository.findByPhotographerIdAndStatusOrderByCreatedAtDesc(photographer.getId(), BookingStatus.COMPLETED, org.springframework.data.domain.PageRequest.of(0, 1)).getTotalElements();
+                .orElseThrow(() -> new RuntimeException("Photographer profile not found"));
+        long total = bookingRepository.findByPhotographerIdOrderByCreatedAtDesc(photographer.getId(),
+                org.springframework.data.domain.PageRequest.of(0, 1)).getTotalElements();
+        long completed = bookingRepository.findByPhotographerIdAndStatusOrderByCreatedAtDesc(photographer.getId(),
+                BookingStatus.COMPLETED, org.springframework.data.domain.PageRequest.of(0, 1)).getTotalElements();
         return java.util.Map.of("total", total, "completed", completed);
     }
 
@@ -233,12 +244,12 @@ public class BookingServiceImpl implements BookingService {
         String prefix = "BK" + LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
         String bookingCode;
         int counter = 1;
-        
+
         do {
             bookingCode = prefix + String.format("%04d", counter);
             counter++;
         } while (bookingRepository.existsByBookingCode(bookingCode));
-        
+
         return bookingCode;
     }
 
@@ -259,8 +270,7 @@ public class BookingServiceImpl implements BookingService {
                                             .description(sp.getDescription())
                                             .price(sp.getBasePrice())
                                             .build();
-                                }).toList()
-                )
+                                }).toList())
                 .date(booking.getDate())
                 .reasonReject(booking.getReasonReject())
                 .note(booking.getNote())
@@ -278,7 +288,8 @@ public class BookingServiceImpl implements BookingService {
                 .customerName(booking.getFirstName() + " " + booking.getLastName())
                 .customerEmail(booking.getEmail())
                 .customerPhone(booking.getPhone())
-                .photographerName(booking.getPhotographer().getUser().getFirstName() + " " + booking.getPhotographer().getUser().getLastName())
+                .photographerName(booking.getPhotographer().getUser().getFirstName() + " "
+                        + booking.getPhotographer().getUser().getLastName())
                 .photographerEmail(booking.getPhotographer().getUser().getEmail())
                 .photographerPhone(booking.getPhotographer().getUser().getPhone())
 

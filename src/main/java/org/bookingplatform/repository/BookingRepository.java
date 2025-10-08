@@ -41,4 +41,21 @@ public interface BookingRepository extends JpaRepository<Booking, BigInteger>, J
             "FROM Booking b " +
             "GROUP BY b.photographer.id")
     List<Object[]> countBookingsForAllPhotographers();
+    // ✅ Kiểm tra photographer có bị trùng lịch không
+    @Query("""
+    SELECT COUNT(b) > 0
+    FROM Booking b
+    WHERE b.photographer.id = :photographerId
+      AND b.date = :date
+      AND b.status NOT IN ('CANCELLED', 'REJECTED')
+      AND (
+        (b.startTime < :endTime AND b.endTime > :startTime)
+      )
+    """)
+    boolean existsOverlappingBooking(
+        @Param("photographerId") BigInteger photographerId,
+        @Param("date") java.time.LocalDate date,
+        @Param("startTime") java.time.LocalTime startTime,
+        @Param("endTime") java.time.LocalTime endTime
+    );
 }
