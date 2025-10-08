@@ -31,8 +31,8 @@ spring:
     name: BookingPlatform
   # Local MySQL Database Configuration
   datasource:
-    url: jdbc:mysql://localhost:3306/core_bpp
-    username: root
+    url: jdbc:mysql://corebpp.cpcsqaa280mp.ap-southeast-2.rds.amazonaws.com:3306/core_bpp
+    username: booking
     password: anhtuan123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
