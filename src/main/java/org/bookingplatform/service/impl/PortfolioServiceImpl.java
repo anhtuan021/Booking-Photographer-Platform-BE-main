@@ -96,23 +96,23 @@ public class PortfolioServiceImpl implements PortfolioService {
 //        }
 
         // If a new image file is provided, upload to S3 and delete the old image
-        if (imageFile != null && !imageFile.isEmpty()) {
-            //String newKey = "portfolio/" + profile.getId() + "/" + UUID.randomUUID();
-
-            try {
-                String newImageUrl = s3Service.uploadFile(imageFile);
-
-                // Delete old image from S3 if exists
-                if (image.getImageUrl() != null) {
-                    s3Service.deleteFileByUrl(image.getImageUrl());
+                if (imageFile != null && imageFile.isEmpty()) {
+                    //String newKey = "portfolio/" + profile.getId() + "/" + UUID.randomUUID();
+        
+                    try {
+                        String newImageUrl = s3Service.uploadFile(imageFile);
+        
+                        // Delete old image from S3 if exists
+                        if (image.getImageUrl() != null) {
+                            s3Service.deleteFileByUrl(image.getImageUrl());
+                        }
+        
+                        // Store as JSON array
+                        image.setImageUrl(toJson(List.of(newImageUrl)));
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to upload new portfolio image", e);
+                    }
                 }
-
-                // Store as JSON array
-                image.setImageUrl(toJson(List.of(newImageUrl)));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to upload new portfolio image", e);
-            }
-        }
 
         // Update fields if present
         if (request.getTitle() != null) image.setTitle(request.getTitle());
@@ -147,7 +147,7 @@ public class PortfolioServiceImpl implements PortfolioService {
         String userId = jwtService.extractUserId(token);
         BigInteger userIdBigInt = new BigInteger(userId);
 
-        UserProfile profile = userProfileRepository.findById(userIdBigInt)
+        UserProfile profile = userProfileRepository.findByUser_Id(userIdBigInt)
                 .orElseThrow(() -> new RuntimeException("Photographer profile not found"));
 
         PortfolioImage image = portfolioImageRepository.findById(imageId)
@@ -245,4 +245,5 @@ public class PortfolioServiceImpl implements PortfolioService {
             throw new RuntimeException("Failed to serialize list", e);
         }
     }
+
 }
